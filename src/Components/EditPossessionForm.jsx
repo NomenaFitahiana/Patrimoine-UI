@@ -3,8 +3,8 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-import Possession from "../../../models/possessions/Possession";
-import Flux from "../../../models/possessions/Flux";
+import Possession from "../../models/possessions/Possession";
+import Flux from  "../../models/possessions/Flux";
 import { useNavigate } from "react-router-dom";
 
 export default function EditPossessionForm({
@@ -39,16 +39,18 @@ export default function EditPossessionForm({
     }
 
     console.log(possession.libelle);
-    console.log (updatedData.libelle);
+    console.log(updatedData.libelle);
+    console.log(possession.id);
+
     try {
       await axios.put(
-        `http://localhost:4000/possession/${possession.libelle}`,
+        `${import.meta.env.VITE_URL_API }/possession/${possession.id}`,
         updatedData
       );
 
       let valeurActuelle = possession.valeurActuelle;
 
-      if (possession.valeurConstante=== null) {
+      if (possession.valeurConstante === null) {
         const possessionObj = new Possession(
           possession.possesseur,
           possession.libelle,
@@ -60,7 +62,7 @@ export default function EditPossessionForm({
         valeurActuelle = possessionObj.getValeurApresAmortissement(
           new Date(dateFin)
         );
-      } else  {
+      } else {
         const fluxObj = new Flux(
           possession.possesseur,
           possession.libelle,
@@ -73,12 +75,12 @@ export default function EditPossessionForm({
         valeurActuelle = fluxObj.getValeur(new Date(dateFin));
       }
 
-     
       onPossessionUpdated({
         ...possession,
         ...updatedData,
         valeurActuelle,
       });
+
       handleClose();
       navigate(0);
     } catch (error) {
@@ -120,4 +122,3 @@ export default function EditPossessionForm({
     </Modal>
   );
 }
-
